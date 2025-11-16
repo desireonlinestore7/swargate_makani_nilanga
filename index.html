@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>स्वारगेट-माकणी-निलंगा मार्ग</title>
+  <title>स्वारगेट — माकणी — निलंगा मार्ग</title>
   <style>
     body{font-family:'Segoe UI',Roboto,Arial,sans-serif;margin:0;
       background:linear-gradient(135deg,#fff8f8,#ffecec);color:#2c2c2c;
@@ -21,6 +21,7 @@
     button{background:#b00020;color:white;border:none;padding:10px 16px;
       border-radius:8px;cursor:pointer;font-weight:600;}
     button:hover{background:#7a0015;}
+    button:disabled{background:#ccc;cursor:not-allowed;}
     .small{padding:6px 12px;font-size:14px;}
     #submissionsSection{display:none;margin-top:20px;}
     footer{margin-top:auto;background:#b00020;color:white;text-align:center;
@@ -46,26 +47,35 @@
     }
     @keyframes fadeIn { from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);} }
 
-    /* 🔥 Continuous Sliding Images */
+    /* Continuous sliding images above footer (non-blocking) */
     .image-slider {
       overflow: hidden;
       background: #fff8f8;
       padding: 10px 0;
       border-top: 4px solid #ffd54f;
+      pointer-events: none; /* slider won’t capture clicks */
     }
     .slide-track {
       display: flex;
-      width: calc(250px * 16); /* track wide enough for duplicates */
+      gap: 20px;
+      /* wide enough + duplicated images for seamless loop */
+      width: 200%;
       animation: scroll 30s linear infinite;
     }
     .slide-track img {
       width: 120px;
       height: auto;
-      margin: 0 20px;
+      flex: 0 0 auto;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
     }
     @keyframes scroll {
-      0% { transform: translateX(0); }
+      0%   { transform: translateX(0); }
       100% { transform: translateX(-50%); }
+    }
+
+    @media (max-width: 480px) {
+      .slide-track img { width: 90px; }
+      .slide-track { animation-duration: 24s; }
     }
   </style>
 </head>
@@ -75,14 +85,17 @@
   </header>
 
   <div class="container">
-    <!-- your supporter form stays same -->
     <div class="card">
       <div class="row" style="justify-content:space-between">
         <div>समर्थकांचे गाव निवडा, नंतर नाव आणि आडनाव टाका.</div>
         <button id="addSupporterBtn" class="small">+ समर्थक जोडा</button>
       </div>
     </div>
+
+    <!-- supporters entry area -->
     <div id="supportersList"></div>
+
+    <!-- view submissions section -->
     <div style="margin-top:20px;text-align:center;">
       <button id="viewBtn">View Submissions</button>
     </div>
@@ -93,33 +106,30 @@
     </div>
   </div>
 
-  <!-- 🚍 Sliding Images Section -->
-  <div class="image-slider">
+  <!-- Sliding Images Section (above footer) -->
+  <div class="image-slider" aria-hidden="true">
     <div class="slide-track">
-      <!-- repeat images twice for seamless loop -->
-      <img src="photo_2025-11-16_15-23-26.jpg" alt="Bus" />
-      <img src="photo_2025-11-16_15-23-21.jpg" alt="MSRTC Logo" />
-      <img src="photo_2025-11-16_15-23-13.jpg" alt="Bus" />
-      <img src="photo_2025-11-16_15-23-08.jpg" alt="MSRTC Logo" />
-      <img src="photo_2025-11-16_15-23-04.jpg" alt="Bus" />
+      <!-- base set -->
+      <img src="photo_2025-11-16_15-22-56.jpg" alt="Bus" />
       <img src="photo_2025-11-16_15-23-00.jpg" alt="MSRTC Logo" />
-      <img src="photo_2025-11-16_15-22-56.jpg" alt="Bus" />
+      <img src="photo_2025-11-16_15-23-04.jpg" alt="Bus" />
+      <img src="photo_2025-11-16_15-23-08.jpg" alt="MSRTC Logo" />
+      <img src="photo_2025-11-16_15-23-13.jpg" alt="Bus" />
       <img src="photo_2025-11-16_15-23-26.jpg" alt="MSRTC Logo" />
-
-      <!-- duplicate set -->
+      <!-- duplicate set for seamless loop -->
+      <img src="photo_2025-11-16_15-22-56.jpg" alt="Bus" />
+      <img src="photo_2025-11-16_15-23-00.jpg" alt="MSRTC Logo" />
+      <img src="photo_2025-11-16_15-23-04.jpg" alt="Bus" />
+      <img src="photo_2025-11-16_15-23-08.jpg" alt="MSRTC Logo" />
       <img src="photo_2025-11-16_15-23-21.jpg" alt="Bus" />
-      <img src="photo_2025-11-16_15-23-26.jpg" alt="MSRTC Logo" />
-      <img src=photo_2025-11-16_15-23-13.jpg" alt="Bus" />
-      <img src="photo_2025-11-16_15-23-13.jpg" alt="MSRTC Logo" />
-      <img src="photo_2025-11-16_15-23-08.jpg" alt="Bus" />
       <img src="photo_2025-11-16_15-23-04.jpg" alt="MSRTC Logo" />
-      <img src="photo_2025-11-16_15-22-56.jpg" alt="Bus" />
+      <img src="photo_2025-11-16_15-23-04.jpg" alt="Bus" />
       <img src="photo_2025-11-16_15-23-00.jpg" alt="MSRTC Logo" />
     </div>
   </div>
 
   <footer>
-    © 2025 | स्वारगेट — माकणी — निलंगा मार्ग <br>
+    © 2025 MSRTC Theme | स्वारगेट — माकणी — निलंगा मार्ग <br>
     Designed with ❤️ by <a href="#">SUYOG</a>
   </footer>
 
@@ -137,11 +147,147 @@
   </div>
 
 <script>
-/* your JS stays same */
+document.addEventListener('DOMContentLoaded', () => {
+  const supportersList = document.getElementById('supportersList');
+  const addSupporterBtn = document.getElementById('addSupporterBtn');
+  const viewBtn = document.getElementById('viewBtn');
+  const submissionsSection = document.getElementById('submissionsSection');
+  const submissionList = document.getElementById('submissionList');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const thankyouModal = document.getElementById('thankyouModal');
+  const modalOkBtn = document.getElementById('modalOkBtn');
+
+  const VIEW_PASSWORD = 'swargate2940';
+
+  const villages = [
+    "स्वारगेट","इंदापूर","मोहोळ","सोलापूर","बोरामणी","इटकळ","अणदूर","नळदुर्ग","जळकोट","आष्टामोड",
+    "जेवळी","हिप्परगा","हराळी","धानुरी","चिरकापाटी","करजगांव","माकणी","सास्तूर","गुबाळ","मंगरूळ",
+    "किल्लारी","कवठापाटी","एकोंजी","मुदगड","सरवडी","हाडोली","आनंदवाडी","मदनसुरी","येळमवाडी","मदनसुरीमोड",
+    "लिंबाळा","दादगी","निलंगा","औराद शहाजनी"
+  ];
+
+  function createVillageDropdown(selected='') {
+    const select = document.createElement('select');
+    select.className = 'supVillage';
+    const def = document.createElement('option');
+    def.value = ''; def.textContent = 'गाव निवडा';
+    select.appendChild(def);
+    villages.forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v; opt.textContent = v;
+      if (v === selected) opt.selected = true;
+      select.appendChild(opt);
+    });
+    return select;
+  }
+
+  function addSupporter(name='', surname='', village='') {
+    const s = document.createElement('div');
+    s.className = 'supporter card';
+    const row = document.createElement('div');
+    row.className = 'row';
+
+    const villageSelect = createVillageDropdown(village);
+    row.appendChild(villageSelect);
+
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.placeholder = 'नाव';
+    nameInput.className = 'supName';
+    nameInput.value = name;
+    nameInput.style.display = village ? 'block' : 'none';
+    row.appendChild(nameInput);
+
+    const surnameInput = document.createElement('input');
+    surnameInput.type = 'text';
+    surnameInput.placeholder = 'आडनाव';
+    surnameInput.className = 'supSurname';
+    surnameInput.value = surname;
+    surnameInput.style.display = village ? 'block' : 'none';
+    row.appendChild(surnameInput);
+
+    const submitBtn = document.createElement('button');
+    submitBtn.className = 'small';
+    submitBtn.textContent = 'Submit';
+    row.appendChild(submitBtn);
+
+    s.appendChild(row);
+    supportersList.appendChild(s);
+
+    villageSelect.addEventListener('change', () => {
+      const show = villageSelect.value !== '';
+      nameInput.style.display = show ? 'block' : 'none';
+      surnameInput.style.display = show ? 'block' : 'none';
+      if (!show) { nameInput.value = ''; surnameInput.value = ''; }
+    });
+
+    submitBtn.addEventListener('click', () => {
+      const nameVal = nameInput.value.trim();
+      const surnameVal = surnameInput.value.trim();
+      const villageVal = villageSelect.value;
+      if (!villageVal || !nameVal || !surnameVal) {
+        alert('गाव, नाव आणि आडनाव आवश्यक आहे'); return;
+      }
+      const data = JSON.parse(localStorage.getItem('swargate_supporters') || '[]');
+      data.push({ name: nameVal, surname: surnameVal, village: villageVal });
+      localStorage.setItem('swargate_supporters', JSON.stringify(data));
+      s.remove();
+      thankyouModal.style.display = 'flex';
+      addSupporterBtn.disabled = false; // re-enable add button after submit
+    });
+  }
+
+  function closeModal() {
+    thankyouModal.style.display = 'none';
+  }
+  modalOkBtn.addEventListener('click', closeModal);
+  thankyouModal.addEventListener('click', (e) => {
+    if (e.target === thankyouModal) closeModal();
+  });
+
+  // Add supporter row only when clicking the add button, then disable until submit
+  addSupporterBtn.addEventListener('click', () => {
+    addSupporter();
+    addSupporterBtn.disabled = true;
+  });
+
+  // View submissions
+  viewBtn.addEventListener('click', () => {
+    const pw = prompt('सबमिशन पाहण्यासाठी पासवर्ड द्या:');
+    if (pw === VIEW_PASSWORD) {
+      submissionsSection.style.display = 'block';
+      submissionList.innerHTML = '';
+      const data = JSON.parse(localStorage.getItem('swargate_supporters') || '[]');
+      if (data.length === 0) {
+        submissionList.textContent = 'कोणतेही समर्थक नोंदलेले नाहीत.';
+      } else {
+        const ul = document.createElement('ul');
+        data.forEach(d => {
+          const li = document.createElement('li');
+          li.textContent = `${d.village} - ${d.name} ${d.surname}`;
+          ul.appendChild(li);
+        });
+        submissionList.appendChild(ul);
+      }
+    } else {
+      alert('चुकीचा पासवर्ड!');
+    }
+  });
+
+  // Download CSV
+  downloadBtn.addEventListener('click', () => {
+    const data = JSON.parse(localStorage.getItem('swargate_supporters') || '[]');
+    if (data.length === 0) { alert('डेटा उपलब्ध नाही'); return; }
+    let csv = 'Village,Name,Surname\n';
+    data.forEach(d => { csv += `${d.village},${d.name},${d.surname}\n`; });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'supporters.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+});
 </script>
 </body>
-
-</html
-
-
-
+</html>
